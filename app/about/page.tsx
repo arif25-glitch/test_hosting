@@ -26,7 +26,6 @@ export default function About() {
             <div className="navbar-nav ms-auto py-0 pe-4">
               <a href="/" className="nav-item nav-link">Home</a>
               <a href="/about" className="nav-item nav-link active">About</a>
-              <a href="/services" className="nav-item nav-link">Service</a>
               <a href="index.html" className="nav-item nav-link">Menu</a>
               <a href="https://wa.me/+6282182897993" className="nav-item nav-link">Kontak</a>
               <a href="/admin_login" className="nav-item nav-link">Admin</a>

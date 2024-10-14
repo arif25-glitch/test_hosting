@@ -65,7 +65,7 @@ export default function RootLayout({
         <Script src="lib/lib/wow/wow.min.js" />
         <Script src="lib/lib/easing/easing.min.js" />
         {/* <Script src="lib/lib/waypoints/waypoints.min.js" /> */}
-        <Script src="lib/lib/counterup/counterup.min.js" />
+        {/* <Script src="lib/lib/counterup/counterup.min.js" /> */}
         <Script src="lib/lib/owlcarousel/owl.carousel.min.js" />
         <Script src="lib/lib/tempusdominus/js/moment.min.js" />
         <Script src="lib/lib/tempusdominus/js/moment-timezone.min.js" />

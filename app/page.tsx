@@ -9,6 +9,7 @@ interface MyData {
   harga: string;
   gambar: string;
   deskripsi: string;
+  kategori: string,
 };
 
 /* eslint-disable @next/next/no-img-element */
@@ -29,16 +30,26 @@ export default function Home() {
           'type': type,
         }),
       });
-      const jsonData = await response.json();
-      
-      if (type === 'makanan') {
-        setDataMakanan(jsonData);
-      } else if (type === 'minuman') {
-        setDataMinuman(jsonData);
-      } else if (type === 'snack') {
-        setDataSnack(jsonData);
-      } else if (type === 'frozen_food') {
-        setDataFrozenFood(jsonData);
+
+      try {
+        const jsonData = await response.json();
+        
+        if (jsonData) {
+          console.log(jsonData);
+          
+          if (type === 'makanan') {
+            setDataMakanan(jsonData);
+          } else if (type === 'minuman') {
+            setDataMinuman(jsonData);
+          } else if (type === 'snack') {
+            setDataSnack(jsonData);
+          } else if (type === 'frozen_food') {
+            setDataFrozenFood(jsonData);
+          }
+        }
+
+      } catch (err) {
+
       }
     };
 
@@ -51,6 +62,13 @@ export default function Home() {
 
     getData();
   }, []);
+
+  const handleMenuScroll = () => {
+    const menuElement = document.getElementById('item-menu');
+    if (menuElement) {
+      menuElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="container-fluid bg-white p-0">
@@ -79,12 +97,11 @@ export default function Home() {
             <div className="navbar-nav ms-auto py-0 pe-4">
               <a href="/" className="nav-item nav-link active">Home</a>
               <a href="/about" className="nav-item nav-link">About</a>
-              <a href="/services" className="nav-item nav-link">Service</a>
-              <a href="index.html" className="nav-item nav-link">Menu</a>
-              <a href="https://wa.me/+6282182897993" className="nav-item nav-link">Kontak</a>
+              <a className="nav-item nav-link" onClick={handleMenuScroll}>Menu</a>
+              <a href="https://wa.me/+6281279759241" className="nav-item nav-link">Kontak</a>
               <a href="/admin_login" className="nav-item nav-link">Admin</a>
             </div>
-            <a href="https://gofood.co.id/bandar-lampung/restaurant/dapur-kelinci-tirtayasa-28173952-6f98-4a60-87c1-74564d4f83b9"
+            <a href="https://wa.me/+6281279759241"
               className="btn btn-primary py-2 px-4">Pesan Sekarang</a>
           </div>
         </nav>
@@ -97,12 +114,12 @@ export default function Home() {
                 <p className="text-white animated slideInLeft mb-4 pb-2">Waroeng Nongkie by Cha-Cha Brownie adalah sebuah
                   usaha kafe rumahan yang mengusung konsep berupa tempat untuk bersantai dan berbincang - bincang
                   dimana pengunjung dapat memesan makanan, cemilan serta minuman sesuai dengan aneka menu yang telah disediakan.</p>
-                <a href="https://gofood.co.id/bandar-lampung/restaurant/dapur-kelinci-tirtayasa-28173952-6f98-4a60-87c1-74564d4f83b9"
+                <a href="https://wa.me/+6281279759241"
                   className="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideInLeft">Pesan
                   Sekarang</a>
               </div>
 
-              <div className="col-lg-6 text-center text-lg-end overflow-hidden">
+              <div className="col-lg-6 text-center text-lg-end">
                 <img className="img" src="lib/img/logo21.png" alt="" />
               </div>
             </div>
@@ -169,7 +186,7 @@ export default function Home() {
       {/* <!-- About End --> */}
 
       {/* <!-- Menu Start --> */}
-      <div className="container-fluid py-5">
+      <div className="container-fluid py-5" id="item-menu">
         <div className="container-fluid">
           <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 className="section-title ff-secondary text-center text-primary fw-normal">Menu Makanan</h5>
@@ -251,7 +268,7 @@ export default function Home() {
               {/* End of Tab */}
 
               {/* Foods' Tab   */}
-              <div id="tab-2" className="tab-pane fade show p-0 active">
+              <div id="tab-2" className="tab-pane fade show p-0">
                 <div className="row g-4">
                 {
                     dataMakanan.map((item) => {
@@ -281,7 +298,7 @@ export default function Home() {
               {/* End of Tab */}
 
               {/* Snacks' Tab   */}
-              <div id="tab-3" className="tab-pane fade show p-0 active">
+              <div id="tab-3" className="tab-pane fade show p-0">
                 <div className="row g-4">
                 {
                     dataSnack.map((item) => {
@@ -291,7 +308,7 @@ export default function Home() {
                             <Image 
                               className="flex-shrink-0 img-fluid rounded" 
                               src={item['gambar']}
-                              alt="Gambar Sack" 
+                              alt="Gambar Snack" 
                               height={80}
                               width={80}/>
                             <div className="w-100 d-flex flex-column text-start ps-4">
@@ -311,7 +328,7 @@ export default function Home() {
               {/* End of Tab */}
 
               {/* Frozen Foods' Tab   */}
-              <div id="tab-4" className="tab-pane fade show p-0 active">
+              <div id="tab-4" className="tab-pane fade show p-0">
                 <div className="row g-4">
                 {
                     dataFrozenFood.map((item) => {
@@ -321,7 +338,7 @@ export default function Home() {
                             <Image 
                               className="flex-shrink-0 img-fluid rounded" 
                               src={item['gambar']}
-                              alt="Gambar Sack" 
+                              alt="Gambar Frozen Food" 
                               height={80}
                               width={80}/>
                             <div className="w-100 d-flex flex-column text-start ps-4">
@@ -362,17 +379,16 @@ export default function Home() {
             </div>
             <div className="col-lg-3 col-md-6">
               <h4 className="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
-              <p className="mb-2"><i className="fa fa-map-marker-alt me-3"></i>Alamat apakah benar,
+              <p className="mb-2"><i className="fa fa-map-marker-alt me-3"></i>
                 Jl. Bengkulu no.14 kelurahan yukum jaya Kecamatan Terbanggi Besar, Lampung tengah</p>
-              <p className="mb-2"><i className="fa fa-phone-alt me-3"></i>+6282182897993</p>
-              <p className="mb-2"><i className="fa fa-envelope me-3"></i>dapurkelinci024@gmail.com</p>
+              <p className="mb-2"><i className="fa fa-phone-alt me-3"></i>+6281279759241</p>
               <div className="d-flex pt-2">
                 <a className="btn btn-outline-light btn-social"
-                  href="https://web.facebook.com/dapurkelinci?_rdc=1&_rdr"><i
+                  href="https://www.facebook.com/profile.php?id=100090779837417&mibextid=ZbWKwL"><i
                     className="fab fa-facebook-f"></i></a>
                 <a className="btn btn-outline-light btn-social"
-                  href="https://www.instagram.com/dapur_kelinci/"><i className="fab fa-instagram"></i></a>
-                <a className="btn btn-outline-light btn-social" href="https://wa.me/+6282182897993"><i
+                  href="https://www.instagram.com/waroengnongkie?igsh=ZDk1cmlneWI1eTV6/"><i className="fab fa-instagram"></i></a>
+                <a className="btn btn-outline-light btn-social" href="https://wa.me/+6281279759241"><i
                   className="fab fa-whatsapp"></i></a>
               </div>
             </div>
@@ -386,10 +402,7 @@ export default function Home() {
               </h4>
               <p>Jika Ada Pertanyaan, Silahkan Hubungi Kami.</p>
               <div className="position-relative mx-auto" style={{maxWidth: "400px"}}>
-                <input className="form-control border-primary w-100 py-3 ps-4 pe-5" type="text"
-                  placeholder="Email Anda" />
-                  <button type="button"
-                    className="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+              
               </div>
             </div>
           </div>

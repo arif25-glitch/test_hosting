@@ -10,6 +10,7 @@ interface MyData {
   harga: string;
   gambar: string;
   deskripsi: string;
+  kategori: string,
 };
 
 export default function AdminDashboard() {
@@ -25,6 +26,47 @@ export default function AdminDashboard() {
   const [itemDeskripsi, setItemDeskripsi] = useState('');
   const [itemKategori, setItemKategori] = useState('makanan');
   const [itemFile, setItemFile] = useState<File | null>(null);
+
+  // Product desc edit
+  const [itemNamaEdit, setItemNamaEdit] = useState('');
+  const [itemHargaEdit, setItemHargaEdit] = useState('');
+  const [itemDeskripsiEdit, setItemDeskripsiEdit] = useState('');
+  const [itemKategoriEdit, setItemKategoriEdit] = useState('makanan');
+  const [itemFileEdit, setItemFileEdit] = useState<File | null>(null);
+  const [item_id, setItem_id] = useState('');
+
+  const data_edit_value = async (_id: string, nama: string, harga: string, deskripsi: string, kategori: string) => {
+    setItemNamaEdit(nama);
+    setItemHargaEdit(harga);
+    setItemDeskripsiEdit(deskripsi);
+    setItemKategoriEdit(kategori);
+    setItem_id(_id);
+  }
+
+  const data_edit = async () => {
+    const formData = new FormData();
+
+    formData.append('_id', item_id);
+    formData.append('nama', itemNamaEdit);
+    formData.append('deskripsi', itemDeskripsiEdit);
+    formData.append('harga', itemHargaEdit);
+    formData.append('kategori', itemKategoriEdit);
+
+    if (itemFileEdit) {
+      formData.append('gambar', itemFileEdit);
+    } else {
+      formData.append('gambar', 'no_image');
+    }
+
+    const response = await fetch('/api/data_edit', {
+      method: "POST",
+      body: formData,
+    });
+
+    setItemFileEdit(null);
+
+    location.reload();
+  }
 
   const data_read = async (type: string) => {
     const response = await fetch('/api/data_read', {
@@ -55,24 +97,22 @@ export default function AdminDashboard() {
       body: formData,
     });
 
-    const responseJson = await response.json();
-    if (responseJson['status'] == 201) {
-      const newData = {
-        '_id': responseJson['insertedID'],
-        'nama': itemNama,
-        'deskripsi': itemDeskripsi,
-        'harga': itemHarga,
-        'gambar': 'masih kosong'
-      }
-      setData([...data, newData]);
-      setItemNama('');
-      setItemHarga('');
-      setItemDeskripsi('');
+    await response.json();
+    location.reload();
+  }
 
-      document.getElementById('btn-tambah-close')?.click();
+  const data_delete = async (_id: string, kategori: string) => {
+    const formData = new FormData();
 
-      location.reload();
-    }
+    formData.append('_id', _id);
+    formData.append('kategori', kategori);
+
+    await fetch('/api/data_delete', {
+      method: 'POST',
+      body: formData,
+    });
+
+    location.reload();
   }
 
   return (
@@ -114,27 +154,36 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {
-                  data.map((item, index) => (
-                    <tr key={item['_id']}>
-                      <td>{index + 1}</td>
-                      <td>{item['nama']}</td>
-                      <td>{item['deskripsi']}</td>
-                      <td>{item['harga']}</td>
-                      <td>
-                        <Image
-                          src={item['gambar']}
-                          alt="Gambar tidak dapat ditampilkan"
-                          width={100}
-                          height={100} />
-                      </td>
-                      {/* <td>{item['gambar']}</td> */}
-                      <td>
-                        <button type='button' className='btn btn-primary mb-1 w-100' data-bs-toggle='modal' data-bs-target='#edit-modal'>Edit</button>
-                        <br />
-                        <button type='button' className='btn btn-danger mt-1 w-100'>Hapus</button>
-                      </td>
-                    </tr>
-                  ))
+                  data.map((item, index) => {
+                    // closure to handle data deletion
+                    const handleDelete = () => {
+                      data_delete(item['_id'], item['kategori']);
+                    }
+                    const handleEdit = () => {
+                      data_edit_value(item['_id'], item['nama'], item['harga'], item['deskripsi'], item['kategori']);
+                    }
+                    return (
+                      <tr key={item['_id']}>
+                        <td>{index + 1}</td>
+                        <td>{item['nama']}</td>
+                        <td>{item['deskripsi']}</td>
+                        <td>{item['harga']}</td>
+                        <td>
+                          <Image
+                            src={item['gambar']}
+                            alt="Gambar tidak dapat ditampilkan"
+                            width={100}
+                            height={100} />
+                        </td>
+                        {/* <td>{item['gambar']}</td> */}
+                        <td>
+                          <button type='button' className='btn btn-primary mb-1 w-100' data-bs-toggle='modal' data-bs-target='#edit-modal' onClick={handleEdit}>Edit</button>
+                          <br />
+                          <button type='button' className='btn btn-danger mt-1 w-100' onClick={handleDelete}>Hapus</button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 }
               </tbody>
             </table>
@@ -175,8 +224,8 @@ export default function AdminDashboard() {
                   <select className="form-select" id="exampleInputMenu" name="menu_kategori" onChange={(e) => setItemKategori(e.target.value)}>
                     <option value="makanan" selected>Makanan</option>
                     <option value="minuman">Minuman</option>
-                    <option value="makanan">snack</option>
-                    <option value="minuman">frozen_food</option>
+                    <option value="snack">Snack</option>
+                    <option value="frozen_food">Frozen Food</option>
                   </select>
                 </div>
                 <div className="mb-3 form-check text-end">
@@ -213,10 +262,10 @@ export default function AdminDashboard() {
                 <button type="button" className="btn btn-light w-75" onClick={() => data_read('minuman')} data-bs-dismiss="modal" id="btn-kategori-minuman">Minuman</button>
               </div>
               <div className="container-fluid text-center mt-3">
-                <button type="button" className="btn btn-light w-75" onClick={() => data_read('snack')} data-bs-dismiss="modal" id="btn-kategori-makanan">Makanan</button>
+                <button type="button" className="btn btn-light w-75" onClick={() => data_read('snack')} data-bs-dismiss="modal" id="btn-kategori-makanan">Snack</button>
               </div>
               <div className="container-fluid text-center mt-3">
-                <button type="button" className="btn btn-light w-75" onClick={() => data_read('frozen_food')} data-bs-dismiss="modal" id="btn-kategori-minuman">Minuman</button>
+                <button type="button" className="btn btn-light w-75" onClick={() => data_read('frozen_food')} data-bs-dismiss="modal" id="btn-kategori-minuman">Frozen Food</button>
               </div>
             </div>
             {/* <!-- Modal Footer --> */}
@@ -241,31 +290,31 @@ export default function AdminDashboard() {
               <form method="post">
                 <div className="mb-3">
                   <label className="form-label">Nama</label>
-                  <input type="text" className="form-control" name="nama_makanan" id="nama_makanan_edit" />
+                  <input type="text" className="form-control" name="nama_makanan" value={itemNamaEdit} id="nama_makanan_edit" onChange={(e) => setItemNamaEdit(e.target.value)} />
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Deskripsi</label>
-                  <textarea rows={5} typeof="text" className="form-control" name="deskripsi_makanan" id="deskripsi_makanan_edit"></textarea>
+                  <textarea rows={5} typeof="text" className="form-control" value={itemDeskripsiEdit} name="deskripsi_makanan" id="deskripsi_makanan_edit" onChange={(e) => setItemDeskripsiEdit(e.target.value)}></textarea>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Harga</label>
-                  <input type="text" className="form-control" name="harga_makanan" id="harga_makanan_edit" />
+                  <input type="text" className="form-control" name="harga_makanan" value={itemHargaEdit} id="harga_makanan_edit" onChange={(e) => e.target.value}/>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Gambar</label>
-                  <input className="form-control" type="file" name="gambar_makanan" id="gambar_edit" />
+                  <input className="form-control" type="file" name="gambar_makanan" id="gambar_edit" onChange={(e) => setItemFileEdit(e.target.files ? e.target.files[0] : null)}/>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Pilih Kategori:</label>
                   <select className="form-select" id="kategori_makanan_edit" name="menu_kategori">
                     <option value="makanan" selected>Makanan</option>
                     <option value="minuman">Minuman</option>
-                    <option value="makanan">snack</option>
-                    <option value="minuman">frozen_food</option>
+                    <option value="snack">Snack</option>
+                    <option value="frozen_food">Frozen Food</option>
                   </select>
                 </div>
                 <div className="mb-3 form-check text-end">
-                  <button type="submit" className="btn btn-primary me-2">Edit</button>
+                  <button type="button" className="btn btn-primary me-2" onClick={data_edit}>Edit</button>
                   <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
                 </div>
               </form>

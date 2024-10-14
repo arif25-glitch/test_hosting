@@ -50,12 +50,13 @@ export async function POST(req: Request) {
           'harga': sanitizedHarga,
           'deskripsi': sanitizedDeskripsi,
           'gambar': `/uploads/${fileName}`,
+          'kategori': sanitizedKategori,
         });
     
         return Response.json({
-          'status': 201,
+          'status': 200,
           'insertedID': result.insertedId,
-          'message': 'successful inserted',
+          'message': 'success',
         });  
       } catch (err) {
         console.error("An error occured: ", err);

@@ -1,47 +1,68 @@
 "use client";
 
-import Link from "next/link";
+import Image from 'next/image';
+import React, { useState } from 'react';
 
-export default function Login() {
+export default function LoginForm() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle login logic here
+    if (username === 'admin' && password === 'admin123') {
+      window.location.href = '/admin_dashboard';
+    }
+  };
 
   return (
-    <div className="limiter">
-      <div className="container-login100">
-        <div className="wrap-login100">
-          <form className="login100-form">
-            <span className="login100-form-title p-b-26">
-              Login Admin
-            </span>
-            <span className="login100-form-title p-b-48">
-              <img src="lib/img/logo1.png" width="200px" height="200px" />
-            </span>
-
-            <div className="wrap-input100" data-validate="Masukkan username">
-              <input className="input100" type="text" name="email" id="email" />
-                <span className="focus-input100" data-placeholder="Username"></span>
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <form onSubmit={handleSubmit}>
+                <div className="form-group py-2">
+                  <h2 className='text-center mt-4'>LOGIN ADMIN</h2>
+                </div>
+                <div className='form-group text-center'>
+                  <Image src={'/lib/img/logo1.png'}
+                    alt='Logo'
+                    width={250}
+                    height={250} />
+                </div>
+                <div className="form-group py-2">
+                  <label htmlFor="email">Masukkan username</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="username"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group py-2">
+                  <label htmlFor="password">Masukkan Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary mt-4">
+                  Masuk
+                </button>
+              </form>
             </div>
-
-            <div className="wrap-input100" data-validate="Masukkan password">
-              <span className="btn-show-pass">
-                <i className="zmdi zmdi-eye"></i>
-              </span>
-              <input className="input100" type="password" name="pass" id="password" />
-                <span className="focus-input100" data-placeholder="Password"></span>
-            </div>
-
-            <div className="container-login100-form-btn">
-              <div className="wrap-login100-form-btn">
-                <div className="login100-form-bgbtn"></div>
-                <Link href={'/admin_dashboard'}>
-                  <button className="login100-form-btn">
-                    Login
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
