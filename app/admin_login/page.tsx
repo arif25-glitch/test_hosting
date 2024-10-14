@@ -7,7 +7,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     // Handle login logic here
     if (username === 'admin' && password === 'admin123') {

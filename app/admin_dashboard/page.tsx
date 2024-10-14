@@ -58,7 +58,7 @@ export default function AdminDashboard() {
       formData.append('gambar', 'no_image');
     }
 
-    const response = await fetch('/api/data_edit', {
+    await fetch('/api/data_edit', {
       method: "POST",
       body: formData,
     });
