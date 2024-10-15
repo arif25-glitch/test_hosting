@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const deskripsi = formData.get('deskripsi');
     const kategori = formData.get('kategori');
     const nama = formData.get('nama');
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+    // const uploadDir = path.join(process.cwd(), 'public', 'uploads');
 
     // input sanitization
     const sanitizedKategori = kategori && typeof kategori === 'string' ? kategori : 'defaultCollection';
@@ -29,42 +29,43 @@ export async function POST(req: Request) {
     const sanitizedHarga = harga && typeof harga === 'string' ? harga : 'defaultCollection';
 
     // variable instances
-
-    if (file instanceof File) {
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-    
-      const fileName = file.name;
-      const filePath = path.join(uploadDir, fileName);
-      const buffer = Buffer.from(await file.arrayBuffer());
-      fs.writeFileSync(filePath, buffer);
-
-      try {
-        await client.connect();
-        const database = client.db('waroengnongkie');
-        
-        const collection = database.collection(sanitizedKategori);
-        const result = await collection.insertOne({
-          'nama': sanitizedNama,
-          'harga': sanitizedHarga,
-          'deskripsi': sanitizedDeskripsi,
-          'gambar': `/uploads/${fileName}`,
-          'kategori': sanitizedKategori,
-        });
-    
-        return Response.json({
-          'status': 200,
-          'insertedID': result.insertedId,
-          'message': 'success',
-        });  
-      } catch (err) {
-        console.error("An error occured: ", err);
-        
-      } finally {
-        await client.close();
-      }
+    try {
+      await client.connect();
+      const database = client.db('waroengnongkie');
+      
+      const collection = database.collection(sanitizedKategori);
+      const result = await collection.insertOne({
+        'nama': sanitizedNama,
+        'harga': sanitizedHarga,
+        'deskripsi': sanitizedDeskripsi,
+        'gambar': `/uploads/no_image`,
+        'kategori': sanitizedKategori,
+      });
+  
+      return Response.json({
+        'status': 200,
+        'insertedID': result.insertedId,
+        'message': 'success',
+      });  
+    } catch (err) {
+      console.error("An error occured: ", err);
+      
+    } finally {
+      await client.close();
     }
+
+    // if (file instanceof File) {
+    //   if (!fs.existsSync(uploadDir)) {
+    //     fs.mkdirSync(uploadDir, { recursive: true });
+    //   }
+    
+    //   const fileName = file.name;
+    //   const filePath = path.join(uploadDir, fileName);
+    //   const buffer = Buffer.from(await file.arrayBuffer());
+    //   fs.writeFileSync(filePath, buffer);
+
+      
+    // }
 
     return Response.json({
       'message': 'success',
