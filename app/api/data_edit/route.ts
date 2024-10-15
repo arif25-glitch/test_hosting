@@ -15,7 +15,7 @@ const client = new MongoClient(uri, {
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const file = formData.get('gambar');
+    // const file = formData.get('gambar');
     const harga = formData.get('harga');
     const deskripsi = formData.get('deskripsi');
     const kategori = formData.get('kategori');
