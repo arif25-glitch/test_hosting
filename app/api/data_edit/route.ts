@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { File } from 'buffer';
+// import fs from 'fs';
+// import path from 'path';
+// import { File } from 'buffer';
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 
 const uri = "mongodb+srv://nongkiewaroeng:zaGapAi7eT2Hi0AV@cluster0.u5dci.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";

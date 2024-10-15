@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { File } from 'buffer';
+// import fs from 'fs';
+// import path from 'path';
+// import { File } from 'buffer';
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 const uri = "mongodb+srv://nongkiewaroeng:zaGapAi7eT2Hi0AV@cluster0.u5dci.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -15,7 +15,7 @@ const client = new MongoClient(uri, {
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const file = formData.get('gambar');
+    // const file = formData.get('gambar');
     const harga = formData.get('harga');
     const deskripsi = formData.get('deskripsi');
     const kategori = formData.get('kategori');
